@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta name="author" content="Giovanni Perillo" />
+	<meta name="description" content="Test of movement of a div inside another div with pure javascript." />
+	<title>Move it!</title>
+	<style type="text/css">
+		<!--
+			body { background: #FFF; margin: 0; padding: 0; width: 100%; height: 100%; }
+			#body { background: #AAA; width: 100%; height: 100%; position: absolute; overflow: hidden; }
+			#block { background: #000; width: 5%; height: 5%; position: absolute; left: 47.5%; top: 47.5%; }
+		-->
+	</style>
+	
+	<script type="text/javascript">
+		//position X and Y of the #block
+		var posX = 50;
+		var posY = 50;
+	
+		//proportion to adjust
+		var adjX = -2.5;
+		var adjY = -2.5;
+	
+		//movement percent;
+		var mov = 1;
+		
+		//adjust the position of the div according to the positions variables
+		function fixPosition()
+		{
+			var div = document.getElementById('block');
+			div.style.top = (posY + adjY) + "%";
+			div.style.left = (posX + adjX) + "%";
+		}
+		
+		//the event call for the movement
+		function move(ev)
+		{
+			//gets the onkeydown event
+			var event = window.event ? window.event : e;
+			
+			//check if it exists
+    		if (true) {
+				if(event.keyCode == 38) //up
+				{
+					posY -= mov;
+				}
+			
+				if(event.keyCode == 40) //down
+				{
+					posY += mov;
+				}
+			
+				if(event.keyCode == 37) //left
+				{
+					posX -= mov;
+				}
+			
+				if(event.keyCode == 39) //right
+				{
+					posX += mov;
+				}
+	    	}
+			
+			//fix positions
+			if(posX < 0) posX = 0;
+			if(posX > 100) posX = 100;
+			if(posY < 0) posY = 0;
+			if(posY > 100) posY = 100;			
+			
+			//correct drawning of the div
+			fixPosition();
+		}
+		
+		function checkKey(e) {
+    		var event = window.event ? window.event : e;
+    		if (true) {
+    		    alert(event.keyCode);
+	    	}
+		}
+		
+		//To execute the command when the arrow keys are pressed
+		document.onkeydown= move;
+	</script>
+</head>
+
+<body>
+	<div id="body">
+		<div id="block">
+		</div>
+	</div>
+</body>
+</html>
