@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="author" content="Giovanni Perillo" />
+<meta name="description" content="Test of movement of the worm in the game." />
+<title>Worm Test</title>
+
+<style type="text/css">
+<!--
+body { margin: 0; padding: 0; background: #fff; }
+#map { background:#CCC; border: 3px double #333; width: 300px; height: 300px; margin: auto; }
+.worm { background: #0C0; border: 1px solid #060; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; width: 15px; height: 15px; position: absolute; margin-left: 50%; }
+#head { background: #0A0; top: 92px; left:-120px; }
+-->
+</style>
+
+<script type="text/javascript">
+
+var headX = 3;
+var headY = 3;
+var mov = 1;
+var wormSize = 15;
+
+var nextX = 3;
+var nextY = 3;
+
+var hit = false;
+
+var moveToAdd = 10;
+
+var bodyCount = 0;
+var bodyX = new Array();
+var bodyY = new Array();
+
+var sizeX = 20;
+var sizeY = 20;
+var map;
+
+function updateMap()
+{
+	map = new Array();
+	for(var x = 1; x <= sizeX; x++)
+	{
+		var array = new Array();
+		for(var y = 1; y <= sizeY; y++)
+		{
+			array[y] = 0;
+		}
+		map[x] = array;
+	}
+	map[headX][headY] = "h";
+	if (bodyCount > 0)
+	{
+		for(var b = 1; b <= bodyCount; b++)
+		{
+			map[bodyX[b]][bodyY[b]] = b;
+		}
+	}
+}
+
+function moveBody()
+{
+	moveToAdd -= 1;
+	if(moveToAdd == 0)
+	{
+		moveToAdd = 10;
+		
+		bodyCount += 1;
+		
+		var div = document.getElementById('map');
+		div.innerHTML += "<div id='"+bodyCount+"' class='worm'></div>";
+		
+		bodyX[bodyCount] = -1;
+		bodyY[bodyCount] = -1;
+	}
+	
+	if(bodyCount > 0)
+	{
+		if (bodyCount == 1)
+		{
+			bodyX[1] = headX;
+			bodyY[1] = headY;
+			drawBody(1);
+		}
+		else
+		{
+			var x; var y; var copy;
+			x = bodyX[1];
+			y = bodyY[1];
+			
+			bodyX[1] = headX;
+			bodyY[1] = headY;
+			drawBody(1);
+			
+			for(var i = 2; i <= bodyCount; i++)
+			{
+				copy = bodyX[i];
+				bodyX[i] = x;
+				x=copy;
+				
+				copy = bodyY[i];
+				bodyY[i] = y;
+				y=copy;
+				
+				drawBody(i);
+			}
+		}
+		 
+	}
+}
+
+function draw(div,x,y)
+{
+	div.style.top = ( ((y-1) * wormSize) + 62) + "px";
+	div.style.left = ( ( (x-1) * wormSize) - ( (wormSize * sizeX) / 2 ) ) + "px";
+}
+
+function drawBody(index)
+{
+	draw(document.getElementById(index),bodyX[index],bodyY[index]);
+}
+
+function move(ev)
+{
+	if(event.keyCode == 38) //up
+	{
+		nextY -= mov;
+	}
+	if(event.keyCode == 40) //down
+	{
+		nextY += mov;
+	}
+	if(event.keyCode == 37) //left
+	{
+		nextX -= mov;
+	}
+	if(event.keyCode == 39) //right
+	{
+		nextX += mov;
+	}
+	
+	hit = ( nextY <= 0 || nextY > sizeY || nextX <= 0 || nextX > sizeX);
+	if ( !hit ) hit = map[nextX][nextY];
+	
+	if(hit)
+	{
+		nextX = headX;
+		nextY = headY;
+	}
+	else 
+	{
+		draw(document.getElementById('head'),nextX,nextY);
+		
+		moveBody();
+		
+		headX = nextX;
+		headY = nextY;
+		
+		updateMap();
+	}
+}
+
+document.onload= updateMap();
+document.onkeydown= move;
+
+</script>
+
+</head>
+
+<body>
+<center>
+This is just to test it's moviment, it have no actual gameplay.<br/>
+For each 10 movements, it include a body part, for collision tests.<br/>
+Press the arrow keys to move.
+</center>
+<div id="map">
+<div id="head" class="worm"></div>
+</div>
+<center>
+P.S.: The CSS used here is a little fuzy, but it works... I don't know other way to do it work.<br/>
+P.S.: Some functions here can be optimized, but I don't want to remake them now.
+</center> 
+</body>
+</html>
